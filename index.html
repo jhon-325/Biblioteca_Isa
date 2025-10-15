@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Meu Dashboard Literário — Book Dash</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light" class="flex min-h-screen">
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <!-- Navegação Desktop -->
+  <nav class="hidden md:flex fixed left-0 top-0 h-screen bg-[var(--card)] p-4 flex-col justify-between items-start gap-6 z-40 group transition-all duration-300 w-24 hover:w-60">
+    <div class="w-full">
+      <a href="#" class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-lg bg-[var(--accent-100)] flex items-center justify-center text-[var(--accent)] shadow-sm flex-shrink-0">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        </div>
+        <span class="font-bold text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Isa World</span>
+      </a>
+      <div class="flex flex-col gap-2">
+        <a href="#inicio" class="nav-link flex items-center gap-3 p-3 rounded-lg">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          <span class="opacity-0 group-hover:opacity-100">Início</span>
+        </a>
+        <a href="#progresso" class="nav-link flex items-center gap-3 p-3 rounded-lg text-[var(--muted)] hover:bg-[var(--accent-100)]/40 hover:text-[var(--text)] transition-colors">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <span class="opacity-0 group-hover:opacity-100">Progresso</span>
+        </a>
+        <a href="#pensamentos" class="nav-link flex items-center gap-3 p-3 rounded-lg text-[var(--muted)] hover:bg-[var(--accent-100)]/40 hover:text-[var(--text)] transition-colors">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2s10 4.477 10 10z"></path></svg>
+            <span class="opacity-0 group-hover:opacity-100">Pensamentos</span>
+        </a>
+        <a href="#estante" class="nav-link flex items-center gap-3 p-3 rounded-lg text-[var(--muted)] hover:bg-[var(--accent-100)]/40 hover:text-[var(--text)] transition-colors">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          <span class="opacity-0 group-hover:opacity-100">Estante</span>
+        </a>
+      </div>
+    </div>
+    <div class="w-full">
+      <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-[var(--muted)] hover:bg-[var(--accent-100)]/40 hover:text-[var(--text)] transition-colors">
+        <img id="perfil-nav-capa" src="https://placehold.co/120x120/d1c7b8/333333?text=Você" alt="perfil" class="w-10 h-10 rounded-full shadow-sm flex-shrink-0" />
+        <span class="opacity-0 group-hover:opacity-100">Perfil</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="flex-1 md:ml-24">
+    <div class="max-w-7xl mx-auto p-4 md:p-10 pb-24 md:pb-10">
+      <header class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-extrabold text-[var(--text)]">Meu Cantinho Literário</h1>
+          <p class="text-sm text-[var(--muted)] mt-1">Aconchegante, simples e pronto para suas leituras.</p>
+        </div>
+        <div class="flex items-center gap-2 border border-[var(--border)] rounded-full p-1.5 bg-[var(--card)] shadow-sm">
+          <button id="theme-toggle" class="p-2 rounded-full hover:bg-[var(--glass)] transition-colors" title="Alternar tema">
+            <svg id="theme-icon" class="w-5 h-5 text-[var(--muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor"></svg>
+          </button>
+          <button id="theme-sepia-toggle" class="p-2 rounded-full hover:bg-[var(--glass)] transition-colors" title="Tema Sépia">
+            <svg class="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+          </button>
+          <div class="w-px h-6 bg-[var(--border)]"></div>
+          <button id="backup-export" class="p-2 rounded-full hover:bg-[var(--glass)] transition-colors" title="Exportar JSON">
+              <svg class="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          </button>
+          <input id="file-import" type="file" accept=".json" class="hidden" />
+          <button id="import-btn" class="p-2 rounded-full hover:bg-[var(--glass)] transition-colors" title="Importar JSON">
+             <svg class="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 16v-4.5A2.5 2.5 0 016.5 9H20m-5-4l4 4m0 0l-4 4m4-4H6.5"></path></svg>
+          </button>
+          <button id="csv-export" class="p-2 rounded-full hover:bg-[var(--glass)] transition-colors" title="Exportar para CSV">
+             <svg class="w-5 h-5 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+          </button>
+        </div>
+      </header>
+
+      <div id="views-container" class="relative">
+          <!-- Visão: Início -->
+          <div id="view-inicio" class="view-content">
+            <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <!-- Cards de Estatísticas -->
+                <div class="card p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-[var(--accent-100)] text-[var(--accent)] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    </div>
+                    <div><p class="text-sm text-[var(--muted)]">Livros Lidos</p><p id="meta-count" class="text-2xl font-bold">0</p></div>
+                </div>
+                <div class="card p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-[var(--accent-100)] text-[var(--accent)] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                    </div>
+                    <div><p class="text-sm text-[var(--muted)]">Meta Anual</p><p id="meta-percent" class="text-2xl font-bold">0%</p></div>
+                </div>
+                <div class="card p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-[var(--accent-100)] text-[var(--accent)] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.657 7.343A8 8 0 0117.657 18.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>
+                    </div>
+                    <div><p class="text-sm text-[var(--muted)]">Streak de Leitura</p><p id="streak-count" class="text-2xl font-bold">0 dias</p></div>
+                </div>
+                <div class="card p-5 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-[var(--accent-100)] text-[var(--accent)] flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div><p class="text-sm text-[var(--muted)]">Páginas Lidas</p><p id="total-paginas" class="text-2xl font-bold">0</p></div>
+                </div>
+            </section>
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="card p-5 lg:col-span-2">
+                    <h4 class="font-semibold mb-3">Diário de Leitura</h4>
+                    <p id="frase-inspiradora" class="text-sm text-[var(--muted)] italic mb-3"></p>
+                    <textarea id="diario-input" class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring" rows="3" placeholder="Como foi sua leitura hoje?"></textarea>
+                </div>
+                <div class="card p-5"><h4 class="font-semibold mb-2">Pomodoro Literário</h4><div class="text-4xl font-bold text-center my-4" id="pomodoro-timer">25:00</div><div class="flex justify-center gap-2"><button id="pomodoro-start" class="px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold">Iniciar</button><button id="pomodoro-reset" class="px-4 py-2 border border-[var(--border)] rounded-md text-[var(--muted)]">Resetar</button></div></div>
+            </section>
+            <section id="desafios" class="mb-8">
+                <div class="flex items-center justify-between mb-4"><h2 class="text-xl font-semibold">Desafios Literários</h2><button id="novo-desafio" class="px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded-md font-semibold">+ Novo Desafio</button></div>
+                <div id="grade-desafios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                <div id="sem-desafios" class="text-center text-[var(--muted)] mt-10 hidden"><h3 class="text-lg font-semibold">Nenhum desafio ativo</h3><p class="mt-2">Crie seu primeiro desafio de leitura!</p></div>
+            </section>
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="card p-5 lg:col-span-2"><h4 class="font-semibold mb-3">Calendário de Leitura</h4><div id="calendario-container"></div></div>
+                <div class="card p-5"><h4 class="font-semibold mb-3">Citação Favorita</h4><div id="citacao-container" class="text-center italic text-sm text-[var(--muted)] flex items-center justify-center h-full">Nenhuma citação salva.</div></div>
+            </section>
+            <section id="charts" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-5"><h3 class="font-semibold mb-3">Distribuição por Gênero</h3><canvas id="chart-genero" height="220"></canvas></div>
+                <div class="card p-5"><h3 class="font-semibold mb-3">Histórico (últimos 12 meses)</h3><canvas id="chart-historico" height="220"></canvas></div>
+            </section>
+          </div>
+          
+          <!-- Visão: Progresso de Leitura -->
+          <div id="view-progresso" class="view-content">
+            <section id="progresso-leitura">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold">Progresso de Leitura Atual</h2>
+              </div>
+              <div class="card p-6 md:p-8" id="progress-content">
+                <!-- Conteúdo dinâmico do progresso -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Visão: Pensamentos (Quotes) -->
+          <div id="view-pensamentos" class="view-content">
+            <section id="quotes-section">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
+                  <h2 class="text-xl font-semibold">Meus Pensamentos Favoritos</h2>
+                  <button id="add-quote-btn" class="w-full md:w-auto px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold">+ Adicionar Pensamento</button>
+                </div>
+                <div class="card p-6 mb-6 hidden" id="quote-form-container">
+                    <form id="form-quote" class="space-y-4">
+                        <h3 class="font-semibold">Novo Pensamento</h3>
+                        <div><label class="text-xs font-medium">Citação</label><textarea id="quote-text" required class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring" rows="3"></textarea></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="text-xs font-medium">Personagem / Autor da frase</label><input id="quote-author" required class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring"></div>
+                            <div><label class="text-xs font-medium">Nome do Livro</label><input id="quote-book" required class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring"></div>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button type="button" id="cancel-quote-btn" class="py-2 px-4 rounded-md border border-[var(--border)]">Cancelar</button>
+                            <button type="submit" class="py-2 px-4 rounded-md bg-[var(--accent)] text-white font-semibold">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="quotes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards de quotes -->
+                </div>
+                <div id="no-quotes" class="text-center text-[var(--muted)] mt-10 hidden">
+                    <h3 class="text-lg font-semibold">Nenhum pensamento salvo</h3>
+                    <p class="mt-2">Adicione suas frases favoritas para vê-las aqui.</p>
+                </div>
+            </section>
+          </div>
+          
+          <!-- Visão: Minha Estante -->
+          <div id="view-estante" class="view-content">
+              <section class="card p-4 mb-6">
+                  <!-- CORREÇÃO APLICADA AQUI -->
+                  <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                      <div class="flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-md w-full bg-transparent flex-1">
+                          <svg class="w-5 h-5 text-[var(--muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                          <input id="busca" class="w-full bg-transparent focus:outline-none" placeholder="Pesquisar (Ctrl/Cmd + K)" />
+                      </div>
+                      <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+                          <select id="filtro-status" class="w-full sm:w-auto p-2 border border-[var(--border)] rounded-md bg-transparent"><option value="Todos">Todos</option><option value="Lido">Lido</option><option value="Lendo">Lendo</option><option value="Quero Ler">Quero Ler</option></select>
+                          <select id="ordenar" class="w-full sm:w-auto p-2 border border-[var(--border)] rounded-md bg-transparent"><option value="recent">Mais recentes</option><option value="titulo">Título A→Z</option><option value="nota">Melhor nota</option><option value="paginas">Mais páginas</option></select>
+                          <button id="novo-livro" class="w-full sm:w-auto px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold whitespace-nowrap">+ Adicionar</button>
+                          <button id="abrir-google" class="w-full sm:w-auto px-4 py-2 border border-[var(--border)] rounded-md text-[var(--muted)] whitespace-nowrap">Buscar no Google</button>
+                      </div>
+                  </div>
+              </section>
+              <section id="minha-estante" class="mb-8">
+                  <div class="flex items-center justify-between mb-4"><h2 class="text-xl font-semibold">Minha Estante</h2><div class="text-sm text-[var(--muted)]">Mostrando <span id="contador-exibidos">0</span> de <span id="contador-total">0</span></div></div>
+                  <div id="grade" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
+                  <div id="sem" class="text-center text-[var(--muted)] mt-10 hidden"><h3 class="text-lg font-semibold">Nenhum livro encontrado</h3><p class="mt-2">Adicione seu primeiro livro para começar a acompanhar sua leitura.</p></div>
+              </section>
+          </div>
+      </div>
+      <footer class="mt-10 text-center text-sm text-[var(--muted)]"><p>Dica: clique com o botão direito nos botões de exportação para importar um arquivo.</p></footer>
+    </div>
+  </main>
+  
+  <div id="modal-container"></div>
+  
+  <!-- Navegação Mobile -->
+  <div id="mobile-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-[var(--card)] border-t border-[var(--border)] flex justify-around p-2 z-40">
+    <a href="#inicio" class="mobile-nav-link flex flex-col items-center justify-center text-[var(--muted)] p-2 w-full">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+        <span class="text-xs">Início</span>
+    </a>
+    <a href="#progresso" class="mobile-nav-link flex flex-col items-center justify-center text-[var(--muted)] p-2 w-full">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+        <span class="text-xs">Progresso</span>
+    </a>
+    <a href="#pensamentos" class="mobile-nav-link flex flex-col items-center justify-center text-[var(--muted)] p-2 w-full">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2s10 4.477 10 10z"></path></svg>
+        <span class="text-xs">Pensamentos</span>
+    </a>
+    <a href="#estante" class="mobile-nav-link flex flex-col items-center justify-center text-[var(--muted)] p-2 w-full">
+        <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <span class="text-xs">Estante</span>
+    </a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

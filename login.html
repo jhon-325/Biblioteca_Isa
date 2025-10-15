@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vinda, Isabella</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para o corpo, usando a fonte Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+        }
+
+        /* Estilo para a mensagem de boas-vindas, usando uma fonte mais romântica */
+        .font-romantic {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Animação para o brilho pulsante do botão */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 15px 5px rgba(219, 39, 119, 0.6), 0 0 5px 1px rgba(244, 114, 182, 0.8);
+            }
+            50% {
+                box-shadow: 0 0 30px 10px rgba(219, 39, 119, 0.8), 0 0 10px 2px rgba(244, 114, 182, 1);
+            }
+        }
+        
+        /* Aplica a animação ao botão */
+        #access-button {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+        
+        /* Partículas de fundo */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: #db2777;
+            opacity: 0;
+            animation: rise 10s infinite linear;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-100vh) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        /* Animação para desenhar o coração */
+        #heart-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw-heart 1.5s ease-out forwards;
+        }
+
+        @keyframes draw-heart {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        /* Animação para o coração pulsar */
+        .pulsing-heart {
+           animation: pulse-heart 1.2s infinite ease-in-out 1.5s;
+        }
+
+        @keyframes pulse-heart {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 5px #f472b6);
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 15px #db2777);
+            }
+        }
+
+        /* Classe para animação de fade-in */
+        .fade-in {
+            animation: fadeIn 2s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+    <div id="main-container" class="relative min-h-screen w-full flex flex-col items-center justify-center bg-gray-900 transition-opacity duration-500">
+        <div class="absolute inset-0 z-0 bg-gradient-to-br from-gray-900 via-[#111827] to-black"></div>
+        <div id="particles-container" class="absolute inset-0 z-0 overflow-hidden"></div>
+
+        <div class="z-10 flex flex-col items-center justify-center text-center p-4">
+            
+            <button id="access-button" class="bg-white/5 border border-white/10 backdrop-blur-md rounded-full px-16 py-5 text-2xl font-light text-pink-400 shadow-lg transition-all duration-300 hover:bg-white/10 hover:shadow-pink-500/50">
+                Acessar
+            </button>
+            
+            <div id="heart-container" class="hidden">
+                 <svg class="w-32 h-32 text-pink-500 drop-shadow-lg pulsing-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path id="heart-path" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </div>
+
+            <div id="welcome-message" class="hidden opacity-0">
+                <h1 class="font-romantic text-4xl md:text-5xl text-gray-200">
+                    Bem-vinda, <span class="text-pink-400">Isabella</span>, ao seu mundo.
+                </h1>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const accessButton = document.getElementById('access-button');
+            const heartContainer = document.getElementById('heart-container');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const particlesContainer = document.getElementById('particles-container');
+
+            // Função para criar partículas de fundo
+            function createParticles() {
+                const particleCount = 50; // Número de partículas
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    const size = Math.random() * 3 + 1; // Tamanho entre 1px e 4px
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Posição inicial aleatória na parte inferior da tela
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.bottom = `${Math.random() * -20}%`; // Começa um pouco abaixo da tela
+                    
+                    // Delay e duração da animação aleatórios
+                    const delay = Math.random() * 10;
+                    const duration = Math.random() * 10 + 10; // Duração entre 10s e 20s
+                    particle.style.animationDelay = `${delay}s`;
+                    particle.style.animationDuration = `${duration}s`;
+
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            createParticles();
+
+            // Evento de clique no botão
+            accessButton.addEventListener('click', () => {
+                // Esconde o botão com uma transição suave
+                accessButton.style.transition = 'opacity 0.5s, transform 0.5s';
+                accessButton.style.opacity = '0';
+                accessButton.style.transform = 'scale(0.8)';
+
+                setTimeout(() => {
+                    accessButton.classList.add('hidden');
+                    heartContainer.classList.remove('hidden');
+
+                    // Após a animação do coração, exibe a mensagem
+                    setTimeout(() => {
+                        heartContainer.style.transition = 'opacity 0.5s';
+                        heartContainer.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            heartContainer.classList.add('hidden');
+                            welcomeMessage.classList.remove('hidden');
+                            welcomeMessage.classList.add('fade-in');
+
+                            // --- AJUSTE REALIZADO AQUI ---
+                            // Aguarda a mensagem ser lida e inicia uma animação de saída suave
+                            setTimeout(() => {
+                                // 1. Adiciona uma transição para a animação de saída
+                                welcomeMessage.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                                
+                                // 2. Altera a opacidade e a posição para a mensagem sumir
+                                welcomeMessage.style.opacity = '0';
+                                welcomeMessage.style.transform = 'translateY(-20px)';
+
+                                // 3. Redireciona para a página principal após a animação
+                                setTimeout(() => {
+                                    window.location.href = 'index.html';
+                                }, 700); // Duração da animação (600ms) + uma pequena margem
+
+                            }, 2500); // Espera 2.5s antes de iniciar a animação de saída
+
+                        }, 500);
+
+                    }, 2800); // Duração da animação do coração
+
+                }, 500); // Tempo para a animação do botão
+            });
+        });
+    </script>
+</body>
+</html>
