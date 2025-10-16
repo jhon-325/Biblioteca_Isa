@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----- State -----
     let livros = [];
     let desafios = [];
-    let quotes = []; // Novo estado para quotes
+    let quotes = [];
     let metaAnual = 12;
     let readingLog = {};
     let settings = { pagesPerHour: 30 };
     let achievements = [];
-    let hasUnexportedChanges = false; // Flag para alterações não salvas
+    let hasUnexportedChanges = false;
 
     // ----- Elements & Templates -----
     const modalContainer = document.getElementById('modal-container');
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveData() {
         localStorage.setItem('biblioteca', JSON.stringify(livros));
         localStorage.setItem('desafios', JSON.stringify(desafios));
-        localStorage.setItem('quotes', JSON.stringify(quotes)); // Salva quotes
+        localStorage.setItem('quotes', JSON.stringify(quotes));
         localStorage.setItem('metaAnual', String(metaAnual));
         localStorage.setItem('readingLog', JSON.stringify(readingLog));
         localStorage.setItem('settings', JSON.stringify(settings));
@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
         const views = document.querySelectorAll('.view-content');
 
-        // Define o estado inicial
         document.querySelector('#view-inicio').classList.add('active');
         document.querySelectorAll('a[href="#inicio"]').forEach(link => link.classList.add('nav-item-active'));
 
@@ -83,11 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetId = link.getAttribute('href').substring(1);
                 const targetView = document.getElementById(`view-${targetId}`);
 
-                // Desativa todos os links e views
                 views.forEach(view => view.classList.remove('active'));
                 navLinks.forEach(navLink => navLink.classList.remove('nav-item-active'));
                 
-                // Ativa o view e link correspondente
                 if(targetView) {
                     targetView.classList.add('active');
                 }
@@ -108,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function closeModal(id){ document.getElementById(id)?.remove(); }
 
-    // ----- Book Logic (updated) -----
+    // ----- Book Logic -----
     function openBookModal(livro = null) {
         const content = `
         <form id="form-livro" class="space-y-4">
@@ -179,11 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
         saveData();
         closeModal('book-modal');
         
-        // CORREÇÃO: Força a renderização da tela de Progresso após salvar o livro
         renderProgress(); 
     }
 
-    // ----- Challenge Logic (unchanged) -----
+    // ----- Challenge Logic -----
     function openChallengeModal() {
         const content = `
         <form id="form-desafio" class="space-y-4">
@@ -220,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----- Quotes Logic (unchanged) -----
+    // ----- Quotes Logic -----
     function setupQuotes() {
         const form = document.getElementById('form-quote');
         const grid = document.getElementById('quotes-grid');
@@ -275,20 +271,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // ----- Pomodoro Timer (unchanged) -----
+    // ----- Pomodoro Timer -----
     let pomodoroInterval;
-    // Variáveis de estado iniciais
     let pomodoroTime = 25 * 60;
-    let pomodoroStatus = 'stopped'; // 'running', 'paused', 'stopped'
+    let pomodoroStatus = 'stopped';
 
-    // Elementos do Pomodoro
     const pomodoroTimerEl = document.getElementById('pomodoro-timer');
     const pomodoroStartPauseBtn = document.getElementById('pomodoro-start-pause');
     const pomodoroMinutesInput = document.getElementById('pomodoro-minutes');
     const pomodoroSecondsInput = document.getElementById('pomodoro-seconds');
 
     function getInitialTime() {
-        // Garante que os valores dos inputs são números válidos, caso contrário, usa 0
         const minutes = parseInt(pomodoroMinutesInput.value) || 0;
         const seconds = parseInt(pomodoroSecondsInput.value) || 0;
         return (minutes * 60) + seconds;
@@ -303,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function startOrPausePomodoro() {
         if (pomodoroStatus === 'paused' || pomodoroStatus === 'stopped') {
             
-            // Se estiver parado (status 'stopped'), carrega o tempo dos inputs
             if (pomodoroStatus === 'stopped') {
                 pomodoroTime = getInitialTime();
                 if (pomodoroTime <= 0) {
@@ -312,13 +304,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // Inicia ou continua
             pomodoroStatus = 'running';
             pomodoroStartPauseBtn.textContent = 'Pausar';
             pomodoroStartPauseBtn.classList.remove('bg-[var(--accent)]', 'bg-green-500');
-            pomodoroStartPauseBtn.classList.add('bg-orange-500'); // Cor para Pausar
+            pomodoroStartPauseBtn.classList.add('bg-orange-500');
 
-            // Desabilita inputs enquanto está rodando
             pomodoroMinutesInput.disabled = true;
             pomodoroSecondsInput.disabled = true;
 
@@ -328,9 +318,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     playPomodoroSound();
                     showToast("Sessão de leitura concluída! Você ganhou uma atividade de leitura.", 5000);
                     const today = toYYYYMMDD(new Date());
-                    readingLog[today] = true; // Marca atividade de leitura
+                    readingLog[today] = true;
                     saveData();
-                    resetPomodoroState(true); // Reseta o display para o tempo inicial após o término
+                    resetPomodoroState(true);
                     return;
                 }
                 pomodoroTime--;
@@ -338,14 +328,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1000);
 
         } else if (pomodoroStatus === 'running') {
-            // Pausa
             clearInterval(pomodoroInterval);
             pomodoroStatus = 'paused';
             pomodoroStartPauseBtn.textContent = 'Continuar';
             pomodoroStartPauseBtn.classList.remove('bg-orange-500');
-            pomodoroStartPauseBtn.classList.add('bg-green-500'); // Cor para Continuar
+            pomodoroStartPauseBtn.classList.add('bg-green-500'); 
             
-            // Habilita inputs quando pausado
             pomodoroMinutesInput.disabled = false;
             pomodoroSecondsInput.disabled = false;
         }
@@ -358,11 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
         pomodoroStartPauseBtn.classList.remove('bg-orange-500', 'bg-green-500');
         pomodoroStartPauseBtn.classList.add('bg-[var(--accent)]');
         
-        // Habilita inputs
         pomodoroMinutesInput.disabled = false;
         pomodoroSecondsInput.disabled = false;
         
-        // Se não for para manter o display (ou seja, se o reset for manual), atualiza o tempo interno
         if (!keepDisplay) {
             pomodoroTime = getInitialTime();
         }
@@ -370,7 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function resetPomodoro() {
-        // Redefine o tempo interno para o valor dos inputs e atualiza o display
         pomodoroTime = getInitialTime();
         resetPomodoroState(false);
     }
@@ -380,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
             oscillator.connect(audioCtx.destination);
             oscillator.start();
             setTimeout(() => oscillator.stop(), 500);
@@ -389,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ----- Rendering (unchanged) -----
+    // ----- Rendering -----
     function renderAll(){
         renderDashboard();
         renderShelf();
@@ -397,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCharts();
         renderCalendar();
         renderQuote();
-        renderProgress(); // Chama o progresso
+        renderProgress();
         renderQuotesGrid();
         document.getElementById('frase-inspiradora').textContent = inspiracaoQuotes[Math.floor(Math.random() * inspiracaoQuotes.length)];
     }
@@ -409,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const percent = metaAnual > 0 ? Math.round((lidos.length / metaAnual) * 100) : 0;
         document.getElementById('meta-percent').textContent = `${percent}%`;
         
-        // Streak
         let currentStreak = 0;
         let today = new Date();
         let dateToCheck = new Date(today);
@@ -487,14 +471,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // ----- FUNÇÃO DE RENDERIZAÇÃO DE PROGRESSO (MODIFICADA) -----
     function renderProgress() {
         const container = document.getElementById('progress-content');
         const lendoLivros = livros.filter(l => l.status === 'Lendo');
 
         if (lendoLivros.length === 0) {
             container.innerHTML = `
-            <div class="text-center py-10">
+            <div class="card p-6 md:p-8 text-center py-10">
                 <svg class="w-12 h-12 mx-auto text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
                 <h3 class="text-lg font-semibold mt-4">Nenhum livro em andamento</h3>
                 <p class="text-[var(--muted)] mt-2">Mude o status de um livro para "Lendo" para acompanhar seu progresso aqui.</p>
@@ -503,7 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Gera o HTML para cada livro em progresso
         const allProgressHTML = lendoLivros.map(livroAtual => {
             const { id, titulo, capa, paginas, paginasLidas, autor } = livroAtual;
             const progresso = paginas > 0 ? Math.round((paginasLidas / paginas) * 100) : 0;
@@ -531,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.innerHTML = allProgressHTML;
 
-        // Adiciona listeners para todos os botões "Atualizar progresso"
         container.querySelectorAll('.btn-edit-progress').forEach(button => {
             button.addEventListener('click', (e) => {
                 const bookId = e.currentTarget.dataset.id;
@@ -606,22 +587,32 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
     }
 
-    // ----- Filtering & Sorting (unchanged) -----
+    // ----- Filtering & Sorting (MODIFICADO) -----
     function filterAndSortBooks() {
         const termo = document.getElementById('busca').value.toLowerCase();
         const status = document.getElementById('filtro-status').value;
         const ordenar = document.getElementById('ordenar').value;
         let res = livros.slice();
-        if (status !== 'Todos') res = res.filter(r => r.status === status);
+
+        // Lógica de filtro atualizada
+        if (status === 'Favoritos') {
+            res = res.filter(r => r.favorito);
+        } else if (status !== 'Todos') {
+            res = res.filter(r => r.status === status);
+        }
+
         if (termo) res = res.filter(r => (r.titulo||'').toLowerCase().includes(termo) || (r.autor||'').toLowerCase().includes(termo) || (r.genero||'').toLowerCase().includes(termo));
+        
+        // Lógica de ordenação
         if (ordenar === 'titulo') res.sort((a,b) => a.titulo.localeCompare(b.titulo));
         if (ordenar === 'nota') res.sort((a,b) => (b.nota||0) - (a.nota||0));
         if (ordenar === 'paginas') res.sort((a,b) => (b.paginas||0) - (a.paginas||0));
         if (ordenar === 'recent') res.sort((a,b) => (b.created||0) - (a.created||0));
+        
         return res;
     }
 
-    // ----- Charts (unchanged) -----
+    // ----- Charts -----
     let chartGenero, chartHistorico;
     function renderCharts() {
         if (!window.Chart) return;
@@ -665,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // ----- Google Books API (unchanged) -----
+    // ----- Google Books API -----
     function openGoogleBooksModal() {
         const content = `
             <div class="flex flex-col h-[70vh]">
@@ -745,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
         openBookModal(prefill);
     }
     
-    // ----- Import/Export (unchanged) -----
+    // ----- Import/Export -----
     function exportToCsv() {
         const headers = ['titulo', 'autor', 'genero', 'status', 'nota', 'paginas', 'paginasLidas', 'dataConclusao', 'resenha'];
         const rows = livros.map(livro =>
@@ -807,7 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.target.value = '';
     }
 
-    // ----- Event Listeners (updated) -----
+    // ----- Event Listeners -----
     document.getElementById('grade').addEventListener('click', e => {
         const card = e.target.closest('.card');
         if(!card) return;
@@ -821,7 +812,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveData();
                 showToast('Livro excluído.');
                 
-                // CORREÇÃO: Força a renderização da tela de Progresso após exclusão
                 renderProgress(); 
             }
         }
@@ -830,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveData();
         }
     });
-    // NOVOS LISTENERS DO POMODORO
+
     document.getElementById('pomodoro-start-pause').addEventListener('click', startOrPausePomodoro);
     document.getElementById('pomodoro-reset').addEventListener('click', resetPomodoro);
     document.getElementById('pomodoro-minutes').addEventListener('input', resetPomodoro);
@@ -874,11 +864,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const month = new Date().getMonth();
         document.body.classList.remove('theme-autumn', 'theme-christmas', 'theme-spring');
 
-        if (month >= 2 && month <= 4) {
+        // As estações estão invertidas para o Hemisfério Sul
+        if (month >= 2 && month <= 4) { // Mar, Abr, Mai -> Outono
             document.body.classList.add('theme-autumn');
-        } else if (month >= 8 && month <= 10) {
+        } else if (month >= 8 && month <= 10) { // Set, Out, Nov -> Primavera
             document.body.classList.add('theme-spring');
-        } else if (month === 11) {
+        } else if (month === 11) { // Dez -> Natal
             document.body.classList.add('theme-christmas');
         }
     };
@@ -892,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ----- Init (unchanged) -----
+    // ----- Init -----
     function init(){
         setupTheme();
         setupNavigation();

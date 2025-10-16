@@ -19,7 +19,6 @@
 
   <div id="toasts" aria-live="polite"></div>
 
-  <!-- Navegação Desktop -->
   <nav class="hidden md:flex fixed left-0 top-0 h-screen bg-[var(--card)] p-4 flex-col justify-between items-start gap-6 z-40 group transition-all duration-300 w-24 hover:w-60">
     <div class="w-full">
       <a href="#" class="flex items-center gap-3 mb-6">
@@ -84,10 +83,8 @@
       </header>
 
       <div id="views-container" class="relative">
-          <!-- Visão: Início -->
           <div id="view-inicio" class="view-content">
             <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <!-- Cards de Estatísticas -->
                 <div class="card p-5 flex items-center gap-4">
                     <div class="w-12 h-12 rounded-lg bg-[var(--accent-100)] text-[var(--accent)] flex items-center justify-center flex-shrink-0">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
@@ -119,7 +116,6 @@
                     <p id="frase-inspiradora" class="text-sm text-[var(--muted)] italic mb-3"></p>
                     <textarea id="diario-input" class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring" rows="3" placeholder="Como foi sua leitura hoje?"></textarea>
                 </div>
-                <!-- NOVO POMODORO AQUI -->
                 <div class="card p-5">
                     <h4 class="font-semibold mb-2">Pomodoro Literário</h4>
                     <div class="text-4xl font-bold text-center my-4" id="pomodoro-timer">25:00</div>
@@ -141,8 +137,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- FIM NOVO POMODORO -->
-            </section>
+                </section>
             <section id="desafios" class="mb-8">
                 <div class="flex items-center justify-between mb-4"><h2 class="text-xl font-semibold">Desafios Literários</h2><button id="novo-desafio" class="px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded-md font-semibold">+ Novo Desafio</button></div>
                 <div id="grade-desafios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -158,19 +153,16 @@
             </section>
           </div>
           
-          <!-- Visão: Progresso de Leitura -->
           <div id="view-progresso" class="view-content">
             <section id="progresso-leitura">
               <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-semibold">Progresso de Leitura Atual</h2>
               </div>
-              <div class="card p-6 md:p-8" id="progress-content">
-                <!-- Conteúdo dinâmico do progresso -->
-              </div>
+              <div id="progress-content">
+                </div>
             </section>
           </div>
 
-          <!-- Visão: Pensamentos (Quotes) -->
           <div id="view-pensamentos" class="view-content">
             <section id="quotes-section">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
@@ -192,8 +184,7 @@
                     </form>
                 </div>
                 <div id="quotes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Cards de quotes -->
-                </div>
+                    </div>
                 <div id="no-quotes" class="text-center text-[var(--muted)] mt-10 hidden">
                     <h3 class="text-lg font-semibold">Nenhum pensamento salvo</h3>
                     <p class="mt-2">Adicione suas frases favoritas para vê-las aqui.</p>
@@ -201,17 +192,21 @@
             </section>
           </div>
           
-          <!-- Visão: Minha Estante -->
           <div id="view-estante" class="view-content">
               <section class="card p-4 mb-6">
-                  <!-- CORREÇÃO APLICADA AQUI -->
                   <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                       <div class="flex items-center gap-2 px-3 py-2 border border-[var(--border)] rounded-md w-full bg-transparent flex-1">
                           <svg class="w-5 h-5 text-[var(--muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                           <input id="busca" class="w-full bg-transparent focus:outline-none" placeholder="Pesquisar (Ctrl/Cmd + K)" />
                       </div>
                       <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
-                          <select id="filtro-status" class="w-full sm:w-auto p-2 border border-[var(--border)] rounded-md bg-transparent"><option value="Todos">Todos</option><option value="Lido">Lido</option><option value="Lendo">Lendo</option><option value="Quero Ler">Quero Ler</option></select>
+                          <select id="filtro-status" class="w-full sm:w-auto p-2 border border-[var(--border)] rounded-md bg-transparent">
+                              <option value="Todos">Todos</option>
+                              <option value="Favoritos">⭐ Favoritos</option>
+                              <option value="Lido">Lido</option>
+                              <option value="Lendo">Lendo</option>
+                              <option value="Quero Ler">Quero Ler</option>
+                          </select>
                           <select id="ordenar" class="w-full sm:w-auto p-2 border border-[var(--border)] rounded-md bg-transparent"><option value="recent">Mais recentes</option><option value="titulo">Título A→Z</option><option value="nota">Melhor nota</option><option value="paginas">Mais páginas</option></select>
                           <button id="novo-livro" class="w-full sm:w-auto px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold whitespace-nowrap">+ Adicionar</button>
                           <button id="abrir-google" class="w-full sm:w-auto px-4 py-2 border border-[var(--border)] rounded-md text-[var(--muted)] whitespace-nowrap">Buscar no Google</button>
@@ -231,7 +226,6 @@
   
   <div id="modal-container"></div>
   
-  <!-- Navegação Mobile -->
   <div id="mobile-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-[var(--card)] border-t border-[var(--border)] flex justify-around p-2 z-40">
     <a href="#inicio" class="mobile-nav-link flex flex-col items-center justify-center text-[var(--muted)] p-2 w-full">
         <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
