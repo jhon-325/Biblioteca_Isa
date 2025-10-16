@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function closeModal(id){ document.getElementById(id)?.remove(); }
 
-    // ----- Book Logic (unchanged) -----
+    // ----- Book Logic (updated) -----
     function openBookModal(livro = null) {
         const content = `
         <form id="form-livro" class="space-y-4">
@@ -178,6 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveData();
         closeModal('book-modal');
+        
+        // CORREÇÃO: Força a renderização da tela de Progresso após salvar o livro
+        renderProgress(); 
     }
 
     // ----- Challenge Logic (unchanged) -----
@@ -217,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----- Quotes Logic -----
+    // ----- Quotes Logic (unchanged) -----
     function setupQuotes() {
         const form = document.getElementById('form-quote');
         const grid = document.getElementById('quotes-grid');
@@ -274,34 +277,104 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ----- Pomodoro Timer (unchanged) -----
     let pomodoroInterval;
+    // Variáveis de estado iniciais
     let pomodoroTime = 25 * 60;
+    let pomodoroStatus = 'stopped'; // 'running', 'paused', 'stopped'
+
+    // Elementos do Pomodoro
     const pomodoroTimerEl = document.getElementById('pomodoro-timer');
+    const pomodoroStartPauseBtn = document.getElementById('pomodoro-start-pause');
+    const pomodoroMinutesInput = document.getElementById('pomodoro-minutes');
+    const pomodoroSecondsInput = document.getElementById('pomodoro-seconds');
+
+    function getInitialTime() {
+        // Garante que os valores dos inputs são números válidos, caso contrário, usa 0
+        const minutes = parseInt(pomodoroMinutesInput.value) || 0;
+        const seconds = parseInt(pomodoroSecondsInput.value) || 0;
+        return (minutes * 60) + seconds;
+    }
     
     function updatePomodoroDisplay() {
         const minutes = Math.floor(pomodoroTime / 60);
         const seconds = pomodoroTime % 60;
         pomodoroTimerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
-    function startPomodoro() {
-        clearInterval(pomodoroInterval);
-        pomodoroInterval = setInterval(() => {
-            pomodoroTime--;
-            updatePomodoroDisplay();
-            if (pomodoroTime <= 0) {
-                clearInterval(pomodoroInterval);
-                playPomodoroSound();
-                showToast("Sessão de leitura concluída!");
-                const today = toYYYYMMDD(new Date());
-                readingLog[today] = true;
-                saveData();
+
+    function startOrPausePomodoro() {
+        if (pomodoroStatus === 'paused' || pomodoroStatus === 'stopped') {
+            
+            // Se estiver parado (status 'stopped'), carrega o tempo dos inputs
+            if (pomodoroStatus === 'stopped') {
+                pomodoroTime = getInitialTime();
+                if (pomodoroTime <= 0) {
+                    showToast("Por favor, defina um tempo de pomodoro válido (mínimo de 1 segundo).", 3000);
+                    return;
+                }
             }
-        }, 1000);
+            
+            // Inicia ou continua
+            pomodoroStatus = 'running';
+            pomodoroStartPauseBtn.textContent = 'Pausar';
+            pomodoroStartPauseBtn.classList.remove('bg-[var(--accent)]', 'bg-green-500');
+            pomodoroStartPauseBtn.classList.add('bg-orange-500'); // Cor para Pausar
+
+            // Desabilita inputs enquanto está rodando
+            pomodoroMinutesInput.disabled = true;
+            pomodoroSecondsInput.disabled = true;
+
+            pomodoroInterval = setInterval(() => {
+                if (pomodoroTime <= 0) {
+                    clearInterval(pomodoroInterval);
+                    playPomodoroSound();
+                    showToast("Sessão de leitura concluída! Você ganhou uma atividade de leitura.", 5000);
+                    const today = toYYYYMMDD(new Date());
+                    readingLog[today] = true; // Marca atividade de leitura
+                    saveData();
+                    resetPomodoroState(true); // Reseta o display para o tempo inicial após o término
+                    return;
+                }
+                pomodoroTime--;
+                updatePomodoroDisplay();
+            }, 1000);
+
+        } else if (pomodoroStatus === 'running') {
+            // Pausa
+            clearInterval(pomodoroInterval);
+            pomodoroStatus = 'paused';
+            pomodoroStartPauseBtn.textContent = 'Continuar';
+            pomodoroStartPauseBtn.classList.remove('bg-orange-500');
+            pomodoroStartPauseBtn.classList.add('bg-green-500'); // Cor para Continuar
+            
+            // Habilita inputs quando pausado
+            pomodoroMinutesInput.disabled = false;
+            pomodoroSecondsInput.disabled = false;
+        }
     }
-    function resetPomodoro() {
+
+    function resetPomodoroState(keepDisplay = false) {
         clearInterval(pomodoroInterval);
-        pomodoroTime = 25 * 60;
+        pomodoroStatus = 'stopped';
+        pomodoroStartPauseBtn.textContent = 'Iniciar';
+        pomodoroStartPauseBtn.classList.remove('bg-orange-500', 'bg-green-500');
+        pomodoroStartPauseBtn.classList.add('bg-[var(--accent)]');
+        
+        // Habilita inputs
+        pomodoroMinutesInput.disabled = false;
+        pomodoroSecondsInput.disabled = false;
+        
+        // Se não for para manter o display (ou seja, se o reset for manual), atualiza o tempo interno
+        if (!keepDisplay) {
+            pomodoroTime = getInitialTime();
+        }
         updatePomodoroDisplay();
     }
+    
+    function resetPomodoro() {
+        // Redefine o tempo interno para o valor dos inputs e atualiza o display
+        pomodoroTime = getInitialTime();
+        resetPomodoroState(false);
+    }
+
     function playPomodoroSound() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -316,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ----- Rendering -----
+    // ----- Rendering (unchanged) -----
     function renderAll(){
         renderDashboard();
         renderShelf();
@@ -324,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCharts();
         renderCalendar();
         renderQuote();
-        renderProgress();
+        renderProgress(); // Chama o progresso
         renderQuotesGrid();
         document.getElementById('frase-inspiradora').textContent = inspiracaoQuotes[Math.floor(Math.random() * inspiracaoQuotes.length)];
     }
@@ -413,37 +486,13 @@ document.addEventListener('DOMContentLoaded', () => {
             quoteContainer.classList.add('flex', 'items-center', 'justify-center', 'text-center');
         }
     }
-
-    // ----- NOVAS FUNÇÕES DE RENDERIZAÇÃO -----
-    function renderProgress(){
+    
+    // ----- FUNÇÃO DE RENDERIZAÇÃO DE PROGRESSO (MODIFICADA) -----
+    function renderProgress() {
         const container = document.getElementById('progress-content');
-        const livroAtual = livros.find(l => l.status === 'Lendo');
+        const lendoLivros = livros.filter(l => l.status === 'Lendo');
 
-        if(livroAtual){
-            const { titulo, capa, paginas, paginasLidas, autor } = livroAtual;
-            const progresso = paginas > 0 ? Math.round((paginasLidas / paginas) * 100) : 0;
-            container.innerHTML = `
-            <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                <img src="${capa}" alt="Capa de ${escapeHtml(titulo)}" class="w-40 h-60 object-cover rounded-lg shadow-lg flex-shrink-0" onerror="this.onerror=null;this.src='${gerarCapaPadrao(titulo)}'">
-                <div class="flex-1 w-full text-center md:text-left">
-                    <p class="text-sm text-[var(--muted)]">Você está lendo</p>
-                    <h2 class="text-2xl md:text-3xl font-bold mt-1">${escapeHtml(titulo)}</h2>
-                    <p class="text-sm text-[var(--muted)] mt-1">de ${escapeHtml(autor)}</p>
-                    <div class="mt-6">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-medium text-[var(--accent)]">${progresso}% completo</span>
-                            <span class="text-xs text-[var(--muted)]">${paginasLidas} de ${paginas} páginas</span>
-                        </div>
-                        <div class="w-full bg-[var(--border)] rounded-full h-2.5 overflow-hidden">
-                            <div class="bg-[var(--accent)] h-2.5 rounded-full transition-all duration-500" style="width: ${progresso}%"></div>
-                        </div>
-                        <button class="btn-edit-progress mt-6 px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-[var(--glass)]" data-id="${livroAtual.id}">Atualizar progresso</button>
-                    </div>
-                </div>
-            </div>
-            `;
-            container.querySelector('.btn-edit-progress').addEventListener('click', () => openBookModal(livroAtual));
-        } else {
+        if (lendoLivros.length === 0) {
             container.innerHTML = `
             <div class="text-center py-10">
                 <svg class="w-12 h-12 mx-auto text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
@@ -451,7 +500,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-[var(--muted)] mt-2">Mude o status de um livro para "Lendo" para acompanhar seu progresso aqui.</p>
             </div>
             `;
+            return;
         }
+
+        // Gera o HTML para cada livro em progresso
+        const allProgressHTML = lendoLivros.map(livroAtual => {
+            const { id, titulo, capa, paginas, paginasLidas, autor } = livroAtual;
+            const progresso = paginas > 0 ? Math.round((paginasLidas / paginas) * 100) : 0;
+
+            return `
+                <div class="card p-4 md:p-6 mb-6 flex flex-col md:flex-row items-center gap-6 md:gap-8 pop-in">
+                    <img src="${capa}" alt="Capa de ${escapeHtml(titulo)}" class="w-40 h-60 object-cover rounded-lg shadow-lg flex-shrink-0" onerror="this.onerror=null;this.src='${gerarCapaPadrao(titulo)}'">
+                    <div class="flex-1 w-full text-center md:text-left">
+                        <h2 class="text-2xl md:text-3xl font-bold">${escapeHtml(titulo)}</h2>
+                        <p class="text-sm text-[var(--muted)] mt-1">de ${escapeHtml(autor)}</p>
+                        <div class="mt-6">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-sm font-medium text-[var(--accent)]">${progresso}% completo</span>
+                                <span class="text-xs text-[var(--muted)]">${paginasLidas} de ${paginas} páginas</span>
+                            </div>
+                            <div class="w-full bg-[var(--border)] rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-[var(--accent)] h-2.5 rounded-full transition-all duration-500" style="width: ${progresso}%"></div>
+                            </div>
+                            <button class="btn-edit-progress mt-6 px-4 py-2 text-sm border border-[var(--border)] rounded-md hover:bg-[var(--glass)]" data-id="${id}">Atualizar progresso</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = allProgressHTML;
+
+        // Adiciona listeners para todos os botões "Atualizar progresso"
+        container.querySelectorAll('.btn-edit-progress').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const bookId = e.currentTarget.dataset.id;
+                const bookToEdit = livros.find(l => l.id === bookId);
+                if (bookToEdit) {
+                    openBookModal(bookToEdit);
+                }
+            });
+        });
     }
 
     function renderQuotesGrid(){
@@ -656,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
         openBookModal(prefill);
     }
     
-    // ----- Import/Export -----
+    // ----- Import/Export (unchanged) -----
     function exportToCsv() {
         const headers = ['titulo', 'autor', 'genero', 'status', 'nota', 'paginas', 'paginasLidas', 'dataConclusao', 'resenha'];
         const rows = livros.map(livro =>
@@ -718,7 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.target.value = '';
     }
 
-    // ----- Event Listeners -----
+    // ----- Event Listeners (updated) -----
     document.getElementById('grade').addEventListener('click', e => {
         const card = e.target.closest('.card');
         if(!card) return;
@@ -731,6 +820,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 livros = livros.filter(l => l.id !== livro.id);
                 saveData();
                 showToast('Livro excluído.');
+                
+                // CORREÇÃO: Força a renderização da tela de Progresso após exclusão
+                renderProgress(); 
             }
         }
         else if(e.target.closest('.btn-fav')) {
@@ -738,8 +830,12 @@ document.addEventListener('DOMContentLoaded', () => {
             saveData();
         }
     });
-    document.getElementById('pomodoro-start').addEventListener('click', startPomodoro);
+    // NOVOS LISTENERS DO POMODORO
+    document.getElementById('pomodoro-start-pause').addEventListener('click', startOrPausePomodoro);
     document.getElementById('pomodoro-reset').addEventListener('click', resetPomodoro);
+    document.getElementById('pomodoro-minutes').addEventListener('input', resetPomodoro);
+    document.getElementById('pomodoro-seconds').addEventListener('input', resetPomodoro);
+    
     document.getElementById('novo-livro').addEventListener('click', () => openBookModal());
     document.getElementById('novo-desafio').addEventListener('click', openChallengeModal);
     document.getElementById('abrir-google').addEventListener('click', openGoogleBooksModal);
@@ -796,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ----- Init -----
+    // ----- Init (unchanged) -----
     function init(){
         setupTheme();
         setupNavigation();

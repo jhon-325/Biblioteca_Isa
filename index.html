@@ -49,7 +49,7 @@
     </div>
     <div class="w-full">
       <a href="#" class="flex items-center gap-3 p-3 rounded-lg text-[var(--muted)] hover:bg-[var(--accent-100)]/40 hover:text-[var(--text)] transition-colors">
-        <img id="perfil-nav-capa" src="https://placehold.co/120x120/d1c7b8/333333?text=Você" alt="perfil" class="w-10 h-10 rounded-full shadow-sm flex-shrink-0" />
+        <img id="perfil-nav-capa" src="Screenshot_2.png" alt="perfil" class="w-10 h-10 rounded-full shadow-sm flex-shrink-0" />
         <span class="opacity-0 group-hover:opacity-100">Perfil</span>
       </a>
     </div>
@@ -119,7 +119,29 @@
                     <p id="frase-inspiradora" class="text-sm text-[var(--muted)] italic mb-3"></p>
                     <textarea id="diario-input" class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent focus-ring" rows="3" placeholder="Como foi sua leitura hoje?"></textarea>
                 </div>
-                <div class="card p-5"><h4 class="font-semibold mb-2">Pomodoro Literário</h4><div class="text-4xl font-bold text-center my-4" id="pomodoro-timer">25:00</div><div class="flex justify-center gap-2"><button id="pomodoro-start" class="px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold">Iniciar</button><button id="pomodoro-reset" class="px-4 py-2 border border-[var(--border)] rounded-md text-[var(--muted)]">Resetar</button></div></div>
+                <!-- NOVO POMODORO AQUI -->
+                <div class="card p-5">
+                    <h4 class="font-semibold mb-2">Pomodoro Literário</h4>
+                    <div class="text-4xl font-bold text-center my-4" id="pomodoro-timer">25:00</div>
+                    
+                    <div id="pomodoro-controls" class="flex flex-col items-center gap-4">
+                        <div class="flex items-center gap-2 w-full">
+                            <div class="flex-1">
+                                <label for="pomodoro-minutes" class="text-sm text-[var(--muted)]">Minutos</label>
+                                <input type="number" id="pomodoro-minutes" value="25" min="1" max="60" class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent text-center focus-ring">
+                            </div>
+                            <div class="flex-1">
+                                <label for="pomodoro-seconds" class="text-sm text-[var(--muted)]">Segundos</label>
+                                <input type="number" id="pomodoro-seconds" value="0" min="0" max="59" class="w-full p-2 border border-[var(--border)] rounded-md bg-transparent text-center focus-ring">
+                            </div>
+                        </div>
+                        <div class="flex justify-center gap-2 w-full">
+                            <button id="pomodoro-start-pause" class="flex-1 px-4 py-2 bg-[var(--accent)] text-white rounded-md font-semibold transition-colors duration-300">Iniciar</button>
+                            <button id="pomodoro-reset" class="flex-1 px-4 py-2 border border-[var(--border)] rounded-md text-[var(--muted)] transition-colors duration-300">Resetar</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- FIM NOVO POMODORO -->
             </section>
             <section id="desafios" class="mb-8">
                 <div class="flex items-center justify-between mb-4"><h2 class="text-xl font-semibold">Desafios Literários</h2><button id="novo-desafio" class="px-3 py-1.5 text-sm bg-[var(--accent)] text-white rounded-md font-semibold">+ Novo Desafio</button></div>
